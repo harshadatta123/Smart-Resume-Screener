@@ -11,7 +11,13 @@ from typing import Dict, Any
 from io import BytesIO
 import base64
 
-# ---------- Load Environment ----------
+def load_local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_local_css("style.css")
+
+
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
@@ -20,12 +26,12 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-# ---------- Streamlit UI ----------
+
 st.set_page_config(page_title="Resume Scanner (Gemini)", layout="wide")
-st.title("Resume Scanner — Powered by Gemini Pro ⚡")
+st.title("Resume Scanner — Powered by Gemini Pro ")
 st.caption("Upload resumes (PDF/TXT/DOCX) and compare them with a Job Description.")
 
-# ---------- File Reading Utilities ----------
+
 def extract_text_from_pdf_bytes(file_bytes) -> str:
     file_stream = BytesIO(file_bytes)
     reader = PdfReader(file_stream)
@@ -53,7 +59,7 @@ def extract_text(file) -> str:
     else:
         raise ValueError("Unsupported file format. Only PDF, TXT, and DOCX are supported.")
 
-# ---------- Gemini Helpers ----------
+
 def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
     model = genai.GenerativeModel("gemini-2.5-pro")
     prompt = f"""
@@ -117,18 +123,18 @@ Job description:
             pass
     return {"match_percent": 50, "justification": "Could not compute automatically."}
 
-# ---------- Sidebar ----------
+
 with st.sidebar:
     st.header("Settings")
     top_k = st.number_input("Top K shortlisted candidates", 1, 20, 5)
     weight_embedding = st.slider("Weight for embedding similarity", 0.0, 1.0, 0.6)
     st.caption("Final = (w × embedding_similarity) + ((1-w) × LLM_score/100)")
 
-# ---------- Main Input ----------
+
 uploaded_files = st.file_uploader("Upload resumes", accept_multiple_files=True, type=["pdf", "txt", "docx"])
 job_desc = st.text_area("Paste the Job Description", height=250)
 
-# ---------- Main Logic ----------
+
 if st.button("Analyze Resumes"):
     if not uploaded_files:
         st.error("Please upload at least one resume.")
@@ -173,11 +179,11 @@ if st.button("Analyze Resumes"):
         except Exception as e:
             st.error(f"Error processing {f.name}: {e}")
 
-    # ---------- Display Results ----------
+
     results_sorted = sorted(results, key=lambda x: x["final_percent"], reverse=True)
     st.header("📋 Shortlisted Candidates")
 
-    # ---------- Auto-save shortlisted resumes ----------
+
     SAVE_DIR = "shortlisted_resumes"
     os.makedirs(SAVE_DIR, exist_ok=True)
     auto_saved_count = 0
@@ -196,9 +202,9 @@ if st.button("Analyze Resumes"):
             json.dump(r, f, indent=2)
         auto_saved_count += 1
 
-    st.success(f"✅ Automatically saved top {auto_saved_count} shortlisted resumes to '{SAVE_DIR}' folder!")
+    st.success(f" Automatically saved top {auto_saved_count} shortlisted resumes to '{SAVE_DIR}' folder!")
 
-    # ---------- Show candidates in UI ----------
+
     for i, r in enumerate(results_sorted[:top_k], 1):
         col1, col2 = st.columns([1, 2])
         with col1:
@@ -216,7 +222,7 @@ if st.button("Analyze Resumes"):
 
     st.balloons()
 
-# ---------- View Saved Resumes ----------
+
 SAVE_DIR = "shortlisted_resumes"
 st.header("📂 View Saved Resumes")
 if os.path.exists(SAVE_DIR):

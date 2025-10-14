@@ -1,0 +1,62 @@
+
+.stApp {
+    background: linear-gradient(to bottom right, #f7faff, #e9f2ff);
+    font-family: 'Inter', sans-serif;
+}
+
+
+h1, h2, h3 {
+    color: #1e3a8a !important;
+    font-weight: 700 !important;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+
+section[data-testid="stSidebar"] {
+    background-color: #f0f4ff !important;
+    border-right: 1px solid #cbd5e1 !important;
+}
+
+
+.stButton button {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    color: white !important;
+    border-radius: 10px;
+    padding: 0.6em 1.2em;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+
+.stButton button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #1e40af, #1d4ed8);
+}
+
+
+div[data-testid="stMetricValue"] {
+    font-size: 1.8rem !important;
+    color: #1d4ed8 !important;
+}
+
+.streamlit-expanderHeader {
+    font-weight: 600;
+    color: #1e3a8a !important;
+}
+
+
+hr, .stMarkdown h2 {
+    border-color: #dbeafe !important;
+}
+
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
