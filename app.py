@@ -9,17 +9,16 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import Dict, Any
 
-# Load environment
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     st.error("❌ GEMINI_API_KEY not found in environment (.env). Please set it before running.")
     st.stop()
 
-# Configure Gemini
+
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Streamlit setup
+
 st.set_page_config(page_title="Resume Scanner (Gemini)", layout="wide")
 st.title("Resume Scanner — Powered by Gemini Pro ✨")
 st.write(
@@ -27,7 +26,6 @@ st.write(
     "Gemini will extract structured data, compute match scores, and show shortlisted candidates."
 )
 
-# ---------- Utility Functions ----------
 
 def extract_text_from_pdf_bytes(file_bytes) -> str:
     reader = PdfReader(stream=file_bytes)
@@ -130,7 +128,6 @@ def gemini_score_candidate_against_job(candidate_struct: Dict[str, Any], job_des
     return parsed
 
 
-# ---------- Streamlit UI ----------
 with st.sidebar:
     st.header("Settings")
     top_k = st.number_input("Top K shortlisted to display", min_value=1, max_value=20, value=5)
