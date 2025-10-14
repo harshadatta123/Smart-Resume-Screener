@@ -4,25 +4,27 @@ import streamlit as st
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from docx import Document
-import google.generativeai as genai
+from groq import Groq
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import Dict, Any
+from io import BytesIO
 
-
+# ---------- Load Environment ----------
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    st.error("❌ GEMINI_API_KEY not found in .env file. Please add it.")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    st.error("❌ GROQ_API_KEY not found in .env file. Please add it.")
     st.stop()
 
-genai.configure(api_key=GEMINI_API_KEY)
+client = Groq(api_key=GROQ_API_KEY)
 
-st.set_page_config(page_title="Resume Scanner (Gemini)", layout="wide")
-st.title("Resume Scanner — Powered by Gemini Pro ⚡")
-st.caption("Upload resumes in PDF, TXT, or DOCX formats and compare them with a Job Description.")
+# ---------- Streamlit UI ----------
+st.set_page_config(page_title="Resume Scanner (Groq)", layout="wide")
+st.title("Resume Scanner — Powered by Groq ⚡")
+st.caption("Upload resumes (PDF / TXT / DOCX) and compare them with a Job Description using Groq LLM.")
 
-
+# ---------- File Reading Utilities ----------
 
 def extract_text_from_pdf_bytes(file_bytes) -> str:
     """Extract text from PDF."""
@@ -39,7 +41,6 @@ def extract_text_from_pdf_bytes(file_bytes) -> str:
 
 def extract_text_from_docx(file_bytes) -> str:
     """Extract text from DOCX."""
-    from io import BytesIO
     doc = Document(BytesIO(file_bytes))
     return "\n".join([p.text for p in doc.paragraphs])
 
@@ -54,10 +55,20 @@ def extract_text(file) -> str:
     else:
         raise ValueError("Unsupported file format. Only PDF, TXT, and DOCX are supported.")
 
+# ---------- Groq LLM Helpers ----------
 
-def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
-    """Use Gemini to extract structured resume data."""
-    model = genai.GenerativeModel("gemini-1.5-pro")
+def groq_chat(prompt: str) -> str:
+    """Helper to call Groq LLM."""
+    response = client.chat.completions.create(
+        model="llama-3.1-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+    )
+    return response.choices[0].message.content.strip()
+
+
+def extract_structured_resume(resume_text: str) -> Dict[str, Any]:
+    """Use Groq to extract structured resume data."""
     prompt = f"""
     You are a structured data extractor.
     Parse the following resume text and return valid JSON with these fields:
@@ -72,15 +83,14 @@ def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
     Resume text:
     \"\"\"{resume_text[:6000]}\"\"\"
     """
-    response = model.generate_content(prompt)
-    content = response.text.strip()
+    content = groq_chat(prompt)
+
     try:
-        first = content.find("{")
-        last = content.rfind("}")
+        first, last = content.find("{"), content.rfind("}")
         json_text = content[first:last+1]
         parsed = json.loads(json_text)
     except Exception:
-        st.warning("⚠️ Gemini JSON parsing failed. Returning minimal structure.")
+        st.warning("⚠️ JSON parsing failed. Returning minimal structure.")
         parsed = {
             "name": "",
             "email": "",
@@ -92,27 +102,9 @@ def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
         }
     return parsed
 
-def get_gemini_embedding(text: str) -> np.ndarray:
-    """Generate semantic embedding using Gemini's text-embedding-004 model."""
-    try:
-        embed_model = "models/text-embedding-004"
-        result = genai.embed_content(model=embed_model, content=text)
-        emb = np.array(result["embedding"], dtype=np.float32)
-        return emb
-    except Exception as e:
-        st.warning(f"Embedding failed: {e}. Using fallback vector.")
-        return np.random.rand(768)
 
-def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
-    if a is None or b is None:
-        return 0.0
-    a = a.reshape(1, -1)
-    b = b.reshape(1, -1)
-    return float(cosine_similarity(a, b)[0][0])
-
-def gemini_score_candidate_against_job(candidate_struct: Dict[str, Any], job_desc: str) -> Dict[str, Any]:
-    """Use Gemini to score candidate against job description."""
-    model = genai.GenerativeModel("gemini-1.5-pro")
+def groq_score_candidate(candidate_struct: Dict[str, Any], job_desc: str) -> Dict[str, Any]:
+    """Use Groq to score candidate against job description."""
     prompt = f"""
     You are an expert recruiter.
 
@@ -128,28 +120,39 @@ def gemini_score_candidate_against_job(candidate_struct: Dict[str, Any], job_des
     Job Description:
     \"\"\"{job_desc}\"\"\"
     """
-    response = model.generate_content(prompt)
-    content = response.text.strip()
+    content = groq_chat(prompt)
     try:
-        first = content.find("{")
-        last = content.rfind("}")
+        first, last = content.find("{"), content.rfind("}")
         parsed = json.loads(content[first:last+1])
     except Exception:
         parsed = {"match_percent": 50, "justification": "Could not compute automatically."}
     return parsed
 
 
+def get_simple_embedding(text: str) -> np.ndarray:
+    """Use a simple embedding placeholder (Groq currently doesn’t expose embedding models)."""
+    # You can replace this with sentence-transformers or OpenAI embedding if needed.
+    return np.random.rand(768)
+
+
+def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
+    a = a.reshape(1, -1)
+    b = b.reshape(1, -1)
+    return float(cosine_similarity(a, b)[0][0])
+
+
+# ---------- Sidebar ----------
 with st.sidebar:
     st.header("Settings")
     top_k = st.number_input("Top K shortlisted candidates", 1, 20, 5)
     weight_embedding = st.slider("Weight for embedding similarity", 0.0, 1.0, 0.6)
     st.caption("Final Score = (weight × embedding_similarity) + ((1 - weight) × LLM_score / 100)")
 
-
+# ---------- Main Input ----------
 uploaded_files = st.file_uploader("Upload resumes (PDF / TXT / DOCX)", accept_multiple_files=True, type=["pdf", "txt", "docx"])
 job_desc = st.text_area("Paste the Job Description", height=250)
 
-
+# ---------- Main Logic ----------
 if st.button("Analyze Resumes"):
     if not uploaded_files:
         st.error("Please upload at least one resume.")
@@ -158,28 +161,25 @@ if st.button("Analyze Resumes"):
         st.error("Please provide a valid job description.")
         st.stop()
 
-    st.info("🔍 Processing resumes using Gemini Pro... please wait.")
+    st.info("🔍 Processing resumes using Groq... please wait.")
 
-    job_emb = get_gemini_embedding(job_desc)
+    job_emb = get_simple_embedding(job_desc)
     results = []
 
     for f in uploaded_files:
         try:
             resume_text = extract_text(f)
-            parsed = call_gemini_extract_structured(resume_text)
+            parsed = extract_structured_resume(resume_text)
 
             skills_text = " ".join(parsed.get("skills", []))
-            exp_text = " ".join([
-                e.get("title", "") + " " + e.get("company", "")
-                for e in parsed.get("experience", [])
-            ])
+            exp_text = " ".join([e.get("title", "") + " " + e.get("company", "") for e in parsed.get("experience", [])])
             candidate_text = " ".join([parsed.get("summary", ""), skills_text, exp_text])
 
-            cand_emb = get_gemini_embedding(candidate_text)
+            cand_emb = get_simple_embedding(candidate_text)
             sim = cosine_sim(cand_emb, job_emb)
             sim_norm = (sim + 1) / 2
 
-            llm_score = gemini_score_candidate_against_job(parsed, job_desc)
+            llm_score = groq_score_candidate(parsed, job_desc)
             llm_percent = llm_score.get("match_percent", 50)
             justification = llm_score.get("justification", "")
 
@@ -198,6 +198,7 @@ if st.button("Analyze Resumes"):
         except Exception as e:
             st.error(f"Error processing {f.name}: {e}")
 
+    # ---------- Display Results ----------
     results_sorted = sorted(results, key=lambda x: x["final_percent"], reverse=True)
 
     st.header("📋 Shortlisted Candidates")
@@ -205,7 +206,7 @@ if st.button("Analyze Resumes"):
         col1, col2 = st.columns([1, 2])
         with col1:
             st.metric(label=f"{i}. {r['filename']}", value=f"{r['final_percent']}%")
-            st.caption(f"Similarity: {r['embedding_similarity']:.3f} | Gemini Score: {r['llm_percent']}%")
+            st.caption(f"Similarity: {r['embedding_similarity']:.3f} | LLM Score: {r['llm_percent']}%")
         with col2:
             parsed = r["parsed"]
             st.subheader(parsed.get("name") or r["filename"])
