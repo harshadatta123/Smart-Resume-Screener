@@ -1,1 +1,113 @@
-# Smart-Resume-Screener-
+# Smart-Resume-Screener
+### Project Overview
+The Smart Resume Screener is a powerful, AI-driven application designed to streamline the candidate shortlisting process. It allows HR professionals and recruiters to upload multiple resumes (PDF, DOCX, or TXT) and a Job Description (JD), then intelligently score and rank candidates based on their fit for the role using Google's Gemini models.
+
+The application calculates a final match score by combining two key metrics:
+
+1.  Semantic Similarity: A score based on the embedding similarity between the candidate's core profile and the Job Description.
+    
+2.  LLM Match Score: A percentage score and justification generated directly by the Gemini 2.5 Pro model, providing an in-depth, contextual assessment.
+    
+
+The application is built using Streamlit for the user interface, ensuring an interactive and visually appealing experience.
+
+### Features
+
+*   Multi-Format Resume Support: Accepts and processes resumes in PDF, DOCX, and TXT formats.
+    
+*   AI-Powered Parsing: Uses Gemini 2.5 Pro to extract structured data (name, email, phone, skills, experience, education) from unstructured resume text.
+    
+*   Dual-Layer Scoring: Calculates a weighted average final score based on both semantic (embedding) similarity and a direct LLM match assessment.
+    
+*   Customizable Weighting: Users can adjust the weight slider in the sidebar to prioritize either the semantic similarity or the LLM-generated score.
+    
+*   Top K Shortlisting: Automatically ranks candidates and displays the top K (configurable) performers.
+    
+*   Automatic Saving: Shortlisted resumes and their comprehensive metadata (scores, justification, parsed data) are automatically saved to a local shortlisted\_resumes directory.
+    
+*   Interactive UI: Built with Streamlit and custom CSS for a clean, modern user interface.
+    
+
+### Technology Stack
+
+*   Backend & App Framework: Python
+    
+*   Web Framework: Streamlit
+    
+*   Large Language Model (LLM): Google Gemini API (gemini-2.5-pro and models/text-embedding-004)
+    
+*   PDF Processing: PyPDF2
+    
+*   DOCX Processing: python-docx
+    
+*   Dependencies: dotenv, numpy, scikit-learn (for cosine similarity)
+    
+
+### Setup and Installation
+
+**Prerequisites**
+
+1.  Python: Ensure you have Python 3.8+ installed.
+    
+2.  Gemini API Key: You need a Google Gemini API Key. You can get one from Google AI Studio.
+    
+
+### Step-by-Step Guide
+
+**Step 1: Clone the Repository**
+```bash
+git clone https://github.com/<your-username>/resume-scanner.git
+cd resume-scanner
+```
+
+**Step 2: Create a Virtual Environment**
+```bash
+python -m venv venv
+source venv/bin/activate        # On macOS/Linux
+venv\Scripts\activate           # On Windows
+```
+
+**Step 3: Install Required Dependencies**
+```bash
+pip install -r requirements.txt
+```
+If a requirements.txt file is not available, use:
+```bash
+pip freeze > requirements.txt
+```
+**Step 4: Configure the API Key**
+
+1. Obtain a valid Google Gemini API Key from Google AI Studio.
+
+2. Create a .env file in the project root directory and add:
+```ini
+GEMINI_API_KEY=your_api_key_here
+```
+
+**Running the Application**
+1. Execute the following command in the project directory:
+```bash
+streamlit run app.py
+```
+2. Once the application launches, open the following address in your browser:
+```bash
+http://localhost:8501/
+```
+
+### How to Use
+
+1.  Upload Resumes: Use the "Upload resumes" file uploader to select one or more PDF, DOCX, or TXT files.
+    
+2.  Paste Job Description: Copy and paste the full text of the Job Description into the provided text area.
+    
+3.  Adjust Settings (Optional): In the sidebar, you can:
+    
+    *   Set Top K shortlisted candidates (default is 5).
+        
+    *   Adjust the Weight for embedding similarity (default is 0.6). A higher value makes the score rely more on semantic topic matching, while a lower value relies more on the direct, contextual LLM assessment.
+        
+4.  Analyze: Click the "Analyze Resumes" button.
+    
+5.  View Results: The "Shortlisted Candidates" section will display the top-ranked candidates with their final score, core details (name, email, skills), and the Gemini Pro justification.
+    
+6.  Access Saved Files: The resumes and their full JSON metadata will be saved to the shortlisted\_resumes folder. You can also view and download the saved files directly from the Streamlit app under the "View Saved Resumes" section.
