@@ -4,28 +4,33 @@ The Smart Resume Screener is a powerful, AI-driven application designed to strea
 
 The application calculates a final match score by combining two key metrics:
 
-1.  Semantic Similarity: A score based on the embedding similarity between the candidate's core profile and the Job Description.
-    
-2.  LLM Match Score: A percentage score and justification generated directly by the Gemini 2.5 Pro model, providing an in-depth, contextual assessment.
+1.  **Semantic Similarity**: A score based on the embedding similarity between the candidate's core profile and the Job Description.
+
+2.  **Composite Score Calculation**: Combines embedding-based similarity and LLM-based score using a weighted formula:
+```bash
+    Final Score= (w × Embedding Similarity) + ((1−w) × (LLM Score/100​))
+```
+3.  **LLM Match Score**: A percentage score and justification generated directly by the Gemini 2.5 Pro model, providing an in-depth, contextual assessment.
+4.  **Candidate Ranking and Storage**: Displays top candidates with interpretability metrics and stores shortlisted resumes and metadata locally.
     
 
 The application is built using Streamlit for the user interface, ensuring an interactive and visually appealing experience.
 
 ### Features
 
-*   Multi-Format Resume Support: Accepts and processes resumes in PDF, DOCX, and TXT formats.
+*   **Multi-Format Resume Support**: Accepts and processes resumes in PDF, DOCX, and TXT formats.
     
-*   AI-Powered Parsing: Uses Gemini 2.5 Pro to extract structured data (name, email, phone, skills, experience, education) from unstructured resume text.
+*   **AI-Powered Parsing**: Uses Gemini 2.5 Pro to extract structured data (name, email, phone, skills, experience, education) from unstructured resume text.
     
-*   Dual-Layer Scoring: Calculates a weighted average final score based on both semantic (embedding) similarity and a direct LLM match assessment.
+*   **Dual-Layer Scoring**: Calculates a weighted average final score based on both semantic (embedding) similarity and a direct LLM match assessment.
     
-*   Customizable Weighting: Users can adjust the weight slider in the sidebar to prioritize either the semantic similarity or the LLM-generated score.
+*   **Customizable Weighting**: Users can adjust the weight slider in the sidebar to prioritize either the semantic similarity or the LLM-generated score.
     
-*   Top K Shortlisting: Automatically ranks candidates and displays the top K (configurable) performers.
+*   **Top K Shortlisting**: Automatically ranks candidates and displays the top K (configurable) performers.
     
-*   Automatic Saving: Shortlisted resumes and their comprehensive metadata (scores, justification, parsed data) are automatically saved to a local shortlisted\_resumes directory.
+*   **Automatic Saving**: Shortlisted resumes and their comprehensive metadata (scores, justification, parsed data) are automatically saved to a local shortlisted\_resumes directory.
     
-*   Interactive UI: Built with Streamlit and custom CSS for a clean, modern user interface.
+*   **Interactive UI**: Built with Streamlit and custom CSS for a clean, modern user interface.
     
 
 ### Technology Stack
