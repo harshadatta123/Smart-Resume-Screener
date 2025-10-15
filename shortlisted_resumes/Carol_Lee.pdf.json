@@ -1,0 +1,35 @@
+{
+  "filename": "Carol_Lee.pdf",
+  "parsed": {
+    "name": "Carol Lee",
+    "email": "carol.lee@example.com",
+    "phone": "555-123-4567",
+    "summary": "Graphic designer with 5 years of experience in Adobe Photoshop and Illustrator. Skilled in branding and UI design, but no web development experience.",
+    "skills": [
+      "Photoshop",
+      "Illustrator",
+      "Branding",
+      "UI/UX"
+    ],
+    "experience": [
+      {
+        "title": "Graphic Designer",
+        "company": "DesignCo",
+        "start": "2018",
+        "end": "Present",
+        "bullets": []
+      }
+    ],
+    "education": [
+      {
+        "degree": "B.A. Design",
+        "institution": "Design University",
+        "year": "2017"
+      }
+    ]
+  },
+  "embedding_similarity": 0.6711175739765167,
+  "llm_percent": 0,
+  "justification": "The candidate is a Graphic Designer, while the job is for an entry-level Data Engineer, representing a complete mismatch in career fields. The resume lists design skills like Photoshop and Illustrator, whereas the job requires technical skills such as SQL and Python. There is no overlap between the candidate's qualifications and the job requirements.",
+  "final_percent": 40
+}

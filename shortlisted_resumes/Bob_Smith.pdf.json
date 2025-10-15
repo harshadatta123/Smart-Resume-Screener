@@ -1,0 +1,35 @@
+{
+  "filename": "Bob_Smith.pdf",
+  "parsed": {
+    "name": "Bob Smith",
+    "email": "bob.smith@example.com",
+    "phone": "987-654-3210",
+    "summary": "Software engineer with experience in backend development using Python and Django. Familiar with database design and REST API development. Interested in learning frontend frameworks.",
+    "skills": [
+      "Python",
+      "Django",
+      "REST API",
+      "SQL"
+    ],
+    "experience": [
+      {
+        "title": "Backend Developer",
+        "company": "DataSoft",
+        "start": "Feb 2020",
+        "end": "Present",
+        "bullets": []
+      }
+    ],
+    "education": [
+      {
+        "degree": "B.Tech Computer Science",
+        "institution": "University of Sample",
+        "year": 2018
+      }
+    ]
+  },
+  "embedding_similarity": 0.7745341956615448,
+  "llm_percent": 90,
+  "justification": "The candidate's resume strongly aligns with the core requirements of the entry-level Data Engineer position, specifically citing proficiency in Python and SQL which are listed as key skills in the job description. The experience in backend and API development demonstrates a solid programming foundation well-suited for a data engineering role. The candidate's stated interest in learning new frameworks also matches the job's emphasis on being a curious and quick learner.",
+  "final_percent": 82
+}

@@ -1,0 +1,84 @@
+{
+  "filename": "2025-09-02 Resume - Software Engineering (1) - Balu Andhavarapu.pdf",
+  "parsed": {
+    "name": "Balu Andhavarapu",
+    "email": "balu.somenumbers@gmail.com",
+    "phone": "+91 730 524 1123",
+    "summary": "4th year B.Tech. Computer Science and Engineering student from VIT University with a CGPA of 9.00 and a Codeforces Rating of 1500 (approx.). Experienced in full-stack development, robotics, bug bounties, and competitive programming, demonstrated by numerous hackathon wins and high contest rankings.",
+    "skills": [
+      "Java (Collections framework)",
+      "C/C++ (unix threads and semaphores)",
+      "Python (API requests, asynchronous programming, unit testing, Flask)",
+      "Scikit-learn",
+      "GitHub",
+      "Linux terminal",
+      "SQL",
+      "PL-SQL",
+      "MySQL",
+      "Oracle",
+      "HTML",
+      "CSS",
+      "Javascript",
+      "React",
+      "Electron",
+      "AWS (EC2, S3)",
+      "Keras NLP",
+      "MATLAB",
+      "Verilog",
+      "Robotics (MIT Scratch, Lego, Sensors, Motors, MIT App Inventor)",
+      "Assembly (x86, x51, ARM)",
+      "MS Office",
+      "Google Workspace",
+      "Flutter",
+      "Firebase",
+      "Rust",
+      "Ratatui.rs",
+      "ICS files",
+      "Streamlit",
+      "Gemini API",
+      "PIL",
+      "Arduino C++",
+      "PID algorithm",
+      "Discord API",
+      "SongLink API",
+      "Neat Coding Practices"
+    ],
+    "experience": [
+      {
+        "title": "Programming Team Lead",
+        "company": "Atom Robotics, VIT Chennai",
+        "start": null,
+        "end": null,
+        "bullets": [
+          "Coded and tested Arduino embedded robots using Arduino C++ and PID algorithm.",
+          "Created a drone programming simulator to introduce programmers to robotics."
+        ]
+      },
+      {
+        "title": "Technical department member",
+        "company": "Linux Users Group (lugvitc), VIT Chennai",
+        "start": null,
+        "end": null,
+        "bullets": []
+      },
+      {
+        "title": "Projects Programmer",
+        "company": "Students for the E",
+        "start": null,
+        "end": null,
+        "bullets": []
+      }
+    ],
+    "education": [
+      {
+        "degree": "B.Tech. Computer Science and Engineering",
+        "institution": "VIT University",
+        "year": "4th Year (Ongoing)"
+      }
+    ]
+  },
+  "embedding_similarity": 0.7577162683010101,
+  "llm_percent": 95,
+  "justification": "The candidate is an exceptionally strong fit for an entry-level Data Engineer 1, possessing high academic achievement (9.00 CGPA) and core required technical skills (SQL, Python, AWS). Their background in competitive programming and diverse engineering projects strongly validates the required traits for excellent problem-solving, analytical skills, and rapid technology adoption. The resume meets or exceeds all technical proficiencies and behavioral requirements for a self-starter and fast learner.",
+  "final_percent": 83
+}
