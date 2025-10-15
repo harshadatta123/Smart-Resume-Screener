@@ -61,7 +61,7 @@ def extract_text(file) -> str:
 
 
 def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
-    model = genai.GenerativeModel("gemini-2.5-pro")
+    model = genai.GenerativeModel("gemini-flash-latest")
     prompt = f"""
     Parse this resume text and return JSON with:
     - name, email, phone, summary
@@ -96,7 +96,7 @@ def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
     return float(cosine_similarity(a, b)[0][0])
 
 def gemini_score_candidate_against_job(candidate_struct: dict, job_desc: str) -> dict:
-    model = genai.GenerativeModel("gemini-2.5-pro")
+    model = genai.GenerativeModel("gemini-flash-latest")
     skills = " ".join([str(s or "") for s in candidate_struct.get("skills", [])])
     exp = " ".join([f"{str(e.get('title') or '')} {str(e.get('company') or '')}" 
                     for e in candidate_struct.get("experience", []) if isinstance(e, dict)])
