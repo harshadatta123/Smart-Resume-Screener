@@ -30,6 +30,86 @@ The application calculates a final match score by combining two key metrics:
     
 
 The application is built using Streamlit for the user interface, ensuring an interactive and visually appealing experience.
+### Architecture Diagram
+
+The diagram below represents the high-level architecture of the **Resume Scanner system**. It shows how the Streamlit frontend, Gemini-powered processing modules, and local storage interact to extract resume data, generate embeddings, compute match scores, and produce shortlisted candidates.
+
+![WhatsApp Image 2025-10-16 at 17 55 11_ab04663d](https://github.com/user-attachments/assets/84aeae92-fa5c-4fb4-bf61-8f1175f3b903)
+
+### LLM prompts used:
+
+### 1\. Resume Parsing Prompt
+
+**Function:** call\_gemini\_extract\_structured(resume_text: str)
+
+**Model Used:** gemini-flash-latest
+
+**Purpose:** This prompt instructs the Gemini model to analyze a given resume text and extract structured information in JSON format. It converts unstructured textual resumes into well-defined data elements that can be programmatically processed for further evaluation.
+
+**Prompt Text:**
+
+```python
+prompt = f"""
+Parse this resume text and return JSON with:
+- name, email, phone, summary
+- skills (list)
+- experience (list of {{title, company, start, end, bullets}})
+- education (list of {{degree, institution, year}})
+Resume:
+\"\"\"{resume_text[:6000]}\"\"\""""
+```
+
+**Description:** The model is prompted to extract the candidate’s personal details, skills, work experience, and education history. The output is expected to be in a JSON structure containing clearly defined fields. This structured information is later used to evaluate the candidate’s suitability for a given job description.
+
+### 2\. Candidate–Job Comparison Prompt
+
+**Function:** gemini\_score\_candidate\_against\_job(candidate_struct: dict, job_desc: str)
+
+**Model Used:** gemini-flash-latest
+
+**Purpose:** This prompt requests the Gemini model to compare a candidate’s resume information with a given job description. The model should provide a match percentage and a concise justification for the evaluation.
+
+**Prompt Text:**
+
+```python
+prompt = f"""
+Compare the candidate resume with the job description and output JSON:
+{{"match_percent": <0-100>, "justification": "<2-3 concise sentences>"}}
+Resume:
+\"\"\"{candidate_text}\"\"\" 
+Job description:
+\"\"\"{job_desc}\"\"\""""
+```
+
+**Description:** The model receives the combined text of the candidate’s summary, skills, and experience, along with the job description. It then produces a structured JSON response that includes:
+
+*   **match\_percent**: a numerical value (0–100) indicating how closely the candidate fits the job requirements.
+    
+*   **justification**: a short textual explanation summarizing the reasoning behind the score.
+    
+
+This output serves as the LLM-based semantic evaluation component in the overall scoring system.
+
+### 3\. Embedding Generation
+
+**Function:** get\_gemini\_embedding(text: str)
+
+**Model Used:** models/text-embedding-004
+
+**Purpose:** This step generates vector embeddings for both the candidate’s resume and the job description. These embeddings capture the semantic meaning of the text, enabling quantitative comparison using cosine similarity.
+
+**Model Invocation:**
+
+```python
+result = genai.embed_content(model="models/text-embedding-004", content=text)
+```
+
+**Description:** The model transforms textual content into a high-dimensional numerical vector (embedding). Cosine similarity is then calculated between the resume embedding and the job description embedding to measure how semantically similar they are. This similarity score is combined with the LLM-based evaluation to produce the final composite match score.
+
+### Summary Table
+
+<img width="940" height="222" alt="image" src="https://github.com/user-attachments/assets/34e0e40d-0f8f-4a2b-868e-3885d91142cc" />
+
 
 ### Features
 
