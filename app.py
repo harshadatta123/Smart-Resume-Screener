@@ -21,7 +21,7 @@ load_local_css("style.css")
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    st.error("❌ GEMINI_API_KEY not found in .env file. Please add it.")
+    st.error("GEMINI_API_KEY not found in .env file. Please add it.")
     st.stop()
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -61,7 +61,7 @@ def extract_text(file) -> str:
 
 
 def call_gemini_extract_structured(resume_text: str) -> Dict[str, Any]:
-    model = genai.GenerativeModel("gemini-flash-latest")
+    model = genai.GenerativeModel("gemini-2.5-pro")
     prompt = f"""
     Parse this resume text and return JSON with:
     - name, email, phone, summary
@@ -96,7 +96,7 @@ def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
     return float(cosine_similarity(a, b)[0][0])
 
 def gemini_score_candidate_against_job(candidate_struct: dict, job_desc: str) -> dict:
-    model = genai.GenerativeModel("gemini-flash-latest")
+    model = genai.GenerativeModel("gemini-2.5-pro")
     skills = " ".join([str(s or "") for s in candidate_struct.get("skills", [])])
     exp = " ".join([f"{str(e.get('title') or '')} {str(e.get('company') or '')}" 
                     for e in candidate_struct.get("experience", []) if isinstance(e, dict)])
@@ -143,7 +143,7 @@ if st.button("Analyze Resumes"):
         st.error("Please provide a valid job description.")
         st.stop()
 
-    st.info("🔍 Processing resumes using Gemini Pro... please wait.")
+    st.info("Processing resumes using Gemini Pro... please wait.")
     job_emb = get_gemini_embedding(job_desc)
     results = []
 
@@ -224,7 +224,7 @@ if st.button("Analyze Resumes"):
 
 
 SAVE_DIR = "shortlisted_resumes"
-st.header("📂 View Saved Resumes")
+st.header("View Saved Resumes")
 if os.path.exists(SAVE_DIR):
     saved_files = [f for f in os.listdir(SAVE_DIR) if not f.endswith(".json")]
     if not saved_files:
@@ -248,7 +248,7 @@ if os.path.exists(SAVE_DIR):
                         st.write("**Skills:**", ", ".join(parsed["skills"][:10]))
                 with open(file_path, "rb") as f:
                     b64 = base64.b64encode(f.read()).decode()
-                    href = f'<a href="data:application/octet-stream;base64,{b64}" download="{file_name}">⬇️ Download Resume</a>'
+                    href = f'<a href="data:application/octet-stream;base64,{b64}" download="{file_name}"> Download Resume</a>'
                     st.markdown(href, unsafe_allow_html=True)
 else:
     st.info("Run analysis to generate saved resumes.")
