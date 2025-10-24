@@ -1,4 +1,7 @@
 # Smart-Resume-Screener
+
+## Project Demo Video
+https://drive.google.com/file/d/1I4JL5vXXTczo6M5D6Jvb96lGsHzibXUa/view?usp=sharing
 ### Project Overview
 The Smart Resume Screener is a powerful, AI-driven application designed to streamline the candidate shortlisting process. It allows HR professionals and recruiters to upload multiple resumes (PDF, DOCX, or TXT) and a Job Description (JD), then intelligently score and rank candidates based on their fit for the role using Google's Gemini models.
 
